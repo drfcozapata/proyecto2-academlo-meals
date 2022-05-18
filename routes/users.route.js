@@ -1,25 +1,40 @@
 const express = require('express');
 
+// Middlewares
+const {
+  protectAccountOwner,
+  protectAdmin,
+  protectToken,
+  userExists,
+} = require('../middlewares/users.middleware');
+const {
+  createUserValidations,
+  checkValidations,
+} = require('../middlewares/validations.middleware');
+
 // Controllers
 const {
+  checkToken,
   createUser,
-  loginUser,
-  updateUser,
   deleteUser,
+  getAllUsers,
   getUserOrders,
   getUserOrderById,
-  checkToken,
+  loginUser,
+  updateUser,
 } = require('../controllers/users.controller');
 
 const router = express.Router();
 
-router.post('/signup', createUser);
+router.post('/signup', createUserValidations, checkValidations, createUser);
 router.post('/login', loginUser);
 
+router.use(protectToken);
 router.get('/check-token', checkToken);
 
-router.patch('/:id', updateUser);
-router.delete('/:id', deleteUser);
+router.get('/', protectAdmin, getAllUsers);
+router.patch('/:id', userExists, protectAccountOwner, updateUser);
+router.delete('/:id', userExists, protectAccountOwner, deleteUser);
 router.get('/orders', getUserOrders);
 router.get('/orders/:id', getUserOrderById);
 

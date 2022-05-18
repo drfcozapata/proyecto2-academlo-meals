@@ -1,5 +1,16 @@
 const express = require('express');
 
+// Middlewares
+const { mealExists } = require('../middlewares/meals.middleware');
+const {
+  createMealValidations,
+  checkValidations,
+} = require('../middlewares/validations.middleware');
+const {
+  protectAdmin,
+  protectToken,
+} = require('../middlewares/users.middleware');
+
 // Controllers
 const {
   createMeal,
@@ -11,10 +22,19 @@ const {
 
 const router = express.Router();
 
-router.post('/:id', createMeal);
 router.get('/', getAllMeals);
-router.get('/:id', getMealById);
-router.patch('/:id', updateMeal);
-router.delete('/:id', deleteMeal);
+router.get('/:id', mealExists, getMealById);
+
+router.use(protectToken);
+
+router.post(
+  '/:id',
+  protectAdmin,
+  createMealValidations,
+  checkValidations,
+  createMeal
+);
+router.patch('/:id', protectAdmin, mealExists, updateMeal);
+router.delete('/:id', protectAdmin, mealExists, deleteMeal);
 
 module.exports = { mealsRouter: router };

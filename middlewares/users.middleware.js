@@ -3,10 +3,10 @@ const dotenv = require('dotenv');
 dotenv.config((path = './config.env'));
 
 // Models
-const User = require('../models/user.model');
+const { User } = require('../models/user.model');
 
 // Utils
-const { CatchAsync } = require('../utils/catchAsync');
+const { catchAsync } = require('../utils/catchAsync');
 const { AppError } = require('../utils/appErrors');
 
 const protectToken = catchAsync(async (req, res, next) => {
@@ -50,10 +50,8 @@ const protectAdmin = catchAsync(async (req, res, next) => {
 });
 
 const protectAccountOwner = catchAsync(async (req, res, next) => {
-  if (
-    req.sessionUser.id !== req.params.id &&
-    req.sessionUser.role !== 'admin'
-  ) {
+  const { sessionUser, user } = req;
+  if (sessionUser.id !== user.id && sessionUser.role !== 'admin') {
     return next(
       new AppError(
         'Forbidden. Access permited only to owner or the admin!',
@@ -84,8 +82,8 @@ const userExists = catchAsync(async (req, res, next) => {
 });
 
 module.exports = {
-  protectToken,
-  protectAdmin,
   protectAccountOwner,
+  protectAdmin,
+  protectToken,
   userExists,
 };

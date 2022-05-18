@@ -31,7 +31,7 @@ const createMealValidations = [
 ];
 
 const createOrderValidations = [
-  body('price').notEmpty().withMessage('Price cannot be empty'),
+  body('mealId').notEmpty().withMessage('Meal ID cannot be empty'),
   body('quantity').notEmpty().withMessage('Quantity cannot be empty'),
 ];
 

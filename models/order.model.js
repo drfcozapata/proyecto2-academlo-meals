@@ -16,7 +16,7 @@ const Order = db.define('order', {
     type: DataTypes.INTEGER,
     allowNull: false,
   },
-  price: {
+  totalPrice: {
     type: DataTypes.INTEGER,
     allowNull: false,
   },
