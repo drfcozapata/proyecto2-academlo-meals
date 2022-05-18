@@ -8,7 +8,6 @@ const { globalErrorsHandler } = require('./controllers/errors.controller');
 const { mealsRouter } = require('./routes/meals.route');
 const { ordersRouter } = require('./routes/orders.route');
 const { restaurantsRouter } = require('./routes/restaurants.route');
-const { reviewsRouter } = require('./routes/reviews.route');
 const { usersRouter } = require('./routes/users.route');
 
 // Init Express app
@@ -29,7 +28,6 @@ app.use(limiter);
 app.use('/api/v1/meals', mealsRouter);
 app.use('/api/v1/orders', ordersRouter);
 app.use('/api/v1/restaurants', restaurantsRouter);
-app.use('/api/v1/reviews', reviewsRouter);
 app.use('/api/v1/users', usersRouter);
 
 // Global error handler

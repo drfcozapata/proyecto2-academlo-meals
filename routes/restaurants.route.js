@@ -7,6 +7,7 @@ const {
   protectToken,
 } = require('../middlewares/users.middleware');
 const { restaurantExists } = require('../middlewares/restaurants.middleware');
+const { reviewExists } = require('../middlewares/reviews.middleware');
 const {
   createRestaurantValidations,
   checkValidations,
@@ -26,6 +27,9 @@ const {
 
 const router = express.Router();
 
+router.get('/', getAllRestaurants);
+router.get('/:id', restaurantExists, getRestaurantById);
+
 router.use(protectToken);
 
 router.post(
@@ -35,20 +39,20 @@ router.post(
   checkValidations,
   createRestaurant
 );
-router.get('/', getAllRestaurants);
-router.get('/:id', restaurantExists, getRestaurantById);
 router.patch('/:id', protectAdmin, restaurantExists, updateRestaurant);
 router.delete('/:id', protectAdmin, restaurantExists, deleteRestaurant);
 router.post('/reviews/:id', restaurantExists, createRestaurantReview);
 router.patch(
   '/reviews/restaurantId/:id',
   restaurantExists,
+  reviewExists,
   protectAccountOwner,
   updateRestaurantReview
 );
 router.delete(
   '/reviews/restaurantId/:id',
   restaurantExists,
+  reviewExists,
   protectAccountOwner,
   deleteRestaurantReview
 );

@@ -14,16 +14,6 @@ const { AppError } = require('../utils/appErrors');
 
 dotenv.config((path = './config.env'));
 
-const getAllUsers = catchAsync(async (req, res, next) => {
-  const users = await User.findAll({
-    attributes: { exclude: ['password'] },
-  });
-
-  res.status(200).json({
-    users,
-  });
-});
-
 const createUser = catchAsync(async (req, res, next) => {
   const { name, email, password, role } = req.body;
 
@@ -99,18 +89,18 @@ const deleteUser = catchAsync(async (req, res, next) => {
 });
 
 const getUserOrders = catchAsync(async (req, res, next) => {
-  const { user } = req;
+  const { sessionUser } = req;
 
   // Get orders
   const orders = await Order.findAll({
     where: {
-      userId: user.id,
+      userId: sessionUser.id,
     },
     include: [
       {
         model: Meal,
         attributes: ['id', 'name', 'price'],
-        include: [{ model: Restaurant, attributes: ['id', 'name'] }],
+        include: [{ model: Restaurant, attributes: ['id', 'name', 'address'] }],
       },
     ],
   });
@@ -122,20 +112,20 @@ const getUserOrders = catchAsync(async (req, res, next) => {
 });
 
 const getUserOrderById = catchAsync(async (req, res, next) => {
-  const { user } = req;
+  const { sessionUser } = req;
   const { id } = req.params;
 
   // Get order
   const order = await Order.findOne({
     where: {
-      userId: user.id,
+      userId: sessionUser.id,
       id,
     },
     include: [
       {
         model: Meal,
         attributes: ['id', 'name', 'price'],
-        include: [{ model: Restaurant, attributes: ['id', 'name'] }],
+        include: [{ model: Restaurant, attributes: ['id', 'name', 'address'] }],
       },
     ],
   });
@@ -154,7 +144,6 @@ module.exports = {
   checkToken,
   createUser,
   deleteUser,
-  getAllUsers,
   getUserOrders,
   getUserOrderById,
   loginUser,
