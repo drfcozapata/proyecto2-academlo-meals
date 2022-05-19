@@ -92,7 +92,7 @@ const createRestaurantReview = catchAsync(async (req, res, next) => {
 });
 
 const updateRestaurantReview = catchAsync(async (req, res, next) => {
-  const { sessionUser, restaurant, review } = req;
+  const { sessionUser, review } = req;
 
   const { rating, comment } = req.body;
 
@@ -100,11 +100,6 @@ const updateRestaurantReview = catchAsync(async (req, res, next) => {
     return next(new AppError('You can only update your own reviews', 403));
   } else {
     await review.update({ comment, rating });
-    //   await Review.update({
-    //     where: { restaurantId: restaurant.id, id: review.id },
-    //     comment,
-    //     rating,
-    //   });
   }
 
   res.status(200).json({
