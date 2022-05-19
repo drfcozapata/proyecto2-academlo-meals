@@ -4,6 +4,7 @@ const { Review } = require('../models/review.model');
 
 // Utils
 const { catchAsync } = require('../utils/catchAsync');
+const { AppError } = require('../utils/appErrors');
 
 const createRestaurant = catchAsync(async (req, res, next) => {
   const { name, address, rating } = req.body;
@@ -71,8 +72,7 @@ const deleteRestaurant = catchAsync(async (req, res, next) => {
 });
 
 const createRestaurantReview = catchAsync(async (req, res, next) => {
-  const { sessionUser } = req;
-  const { restaurant } = req;
+  const { sessionUser, restaurant } = req;
 
   const { rating, comment } = req.body;
 
@@ -91,9 +91,41 @@ const createRestaurantReview = catchAsync(async (req, res, next) => {
   });
 });
 
-const updateRestaurantReview = catchAsync(async (req, res, next) => {});
+const updateRestaurantReview = catchAsync(async (req, res, next) => {
+  const { sessionUser, restaurant, review } = req;
 
-const deleteRestaurantReview = catchAsync(async (req, res, next) => {});
+  const { rating, comment } = req.body;
+
+  if (sessionUser.id !== review.userId) {
+    return next(new AppError('You can only update your own reviews', 403));
+  } else {
+    await review.update({ comment, rating });
+    //   await Review.update({
+    //     where: { restaurantId: restaurant.id, id: review.id },
+    //     comment,
+    //     rating,
+    //   });
+  }
+
+  res.status(200).json({
+    status: 'Review updated',
+    review,
+  });
+});
+
+const deleteRestaurantReview = catchAsync(async (req, res, next) => {
+  const { sessionUser, review } = req;
+
+  if (sessionUser.id !== review.userId) {
+    return next(new AppError('You can only delete your own reviews', 403));
+  } else {
+    await Review.destroy({ where: { id: review.id } });
+  }
+
+  res.status(200).json({
+    status: 'Review deleted',
+  });
+});
 
 module.exports = {
   createRestaurant,

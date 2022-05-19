@@ -51,13 +51,8 @@ const protectAdmin = catchAsync(async (req, res, next) => {
 
 const protectAccountOwner = catchAsync(async (req, res, next) => {
   const { sessionUser, user } = req;
-  if (sessionUser.id !== user.id && sessionUser.role !== 'admin') {
-    return next(
-      new AppError(
-        'Forbidden. Access permited only to owner or the admin!',
-        403
-      )
-    );
+  if (sessionUser.id !== user.id) {
+    return next(new AppError('Forbidden. Access permited only to owner!', 403));
   }
 
   next();

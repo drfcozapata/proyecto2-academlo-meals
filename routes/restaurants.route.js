@@ -43,17 +43,14 @@ router.patch('/:id', protectAdmin, restaurantExists, updateRestaurant);
 router.delete('/:id', protectAdmin, restaurantExists, deleteRestaurant);
 router.post('/reviews/:id', restaurantExists, createRestaurantReview);
 router.patch(
-  '/reviews/restaurantId/:id',
-  restaurantExists,
+  '/reviews/:restaurantId/:id',
   reviewExists,
-  protectAccountOwner,
+  // protectAccountOwner,
   updateRestaurantReview
 );
 router.delete(
-  '/reviews/restaurantId/:id',
-  restaurantExists,
+  '/reviews/:restaurantId/:id',
   reviewExists,
-  protectAccountOwner,
   deleteRestaurantReview
 );
 
